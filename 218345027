@@ -1,0 +1,30 @@
+#include "Adafruit_CharacterOLED_Particle/Adafruit_CharacterOLED_Particle.h"
+#include "OneWire/OneWire.h"
+#include "spark-dallas-temperature/spark-dallas-temperature.h"
+OneWire oneWire(A1);
+Adafruit_CharacterOLED lcd(OLED_V2, 6, 5, 4, 3, 2, 1, 0);
+DallasTemperature ds(&oneWire);
+double tempC;
+void setup()
+{
+    lcd.begin(16, 2);
+    lcd.print("Temperature");
+    lcd.setCursor(0,1);
+    lcd.print("Sensing");
+    ds.begin();
+    Particle.variable("Temp",tempC);
+}
+void loop()
+{
+    ds.requestTemperatures();
+
+    tempC = ds.getTempCByIndex(0);
+    
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Temperature:");
+    lcd.setCursor(0,1);
+    lcd.print(tempC);
+    
+    delay(10000);
+}
